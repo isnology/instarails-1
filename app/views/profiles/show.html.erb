@@ -1,0 +1,34 @@
+<nav class="navbar">
+  <h1>
+    <%= @profile.username %>
+  </h1>
+</nav>
+
+<p id="notice"><%= notice %></p>
+
+
+<h3>
+  <%= @profile.name %>
+</h3>
+
+<p>
+  <%= @profile.user.email %>
+</p>
+
+<p>
+  <%= @profile.bio %>
+</p>
+
+<div class="d-flex justify-content-around">
+  <p class="profile-count text-center">
+    <%= pluralize(@profile.user.photos.count, 'photo') %>
+  </p>
+  <p class="profile-count text-center">
+    <%= pluralize(@profile.user.followers.count, 'follower') %>
+  </p>
+  <p class="profile-count text-center">
+    <%= pluralize(@profile.user.following.count, 'following', plural: 'following') %>
+  </p>
+</div>
+
+<%= link_to 'Edit', edit_profile_path(@profile) %>
