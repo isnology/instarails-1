@@ -1,9 +1,11 @@
+
 <nav class="navbar">
   <h1>
     <%= @profile.username %>
   </h1>
 </nav>
 
+<div class="container-fluid">
 <p id="notice"><%= notice %></p>
 
 
@@ -21,14 +23,15 @@
 
 <div class="d-flex justify-content-around">
   <p class="profile-count text-center">
-    <%= pluralize(@profile.user.photos.count, 'photo') %>
+    <%= pluralize(@profile.user.photos.count, 'photo').split(' ').join('<br/>').html_safe %>
   </p>
   <p class="profile-count text-center">
-    <%= pluralize(@profile.user.followers.count, 'follower') %>
+    <%= pluralize(@profile.user.followers.count, 'follower').split(' ').join('<br/>').html_safe %>
   </p>
   <p class="profile-count text-center">
-    <%= pluralize(@profile.user.following.count, 'following', plural: 'following') %>
+    <%= pluralize(@profile.user.following.count, 'following', plural: 'following').split(' ').join('<br/>').html_safe %>
   </p>
 </div>
 
 <%= link_to 'Edit', edit_profile_path(@profile) %>
+</div>
