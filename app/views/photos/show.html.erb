@@ -5,8 +5,12 @@
 </p>
 
 <p>
-  <strong><%= @photo.user.email %></strong>
+  <strong><%= @photo.user.email %></strong><div id="map"></div>
   <%= @photo.description %>
+  <%= @photo.location %>
+  <%= @photo.latitude %>
+  <%= @photo.longitude %>
+
 </p>
 
 <!-- like button -->
