@@ -33,4 +33,12 @@ class User < ApplicationRecord
   def followed_by?(user)
     followers.exists?(user.id)
   end
+  
+  def toggle_followed_by(user)
+    if followers.exists?(user.id)
+      followers.destroy(user)
+    else
+      followers << user
+    end
+  end
 end

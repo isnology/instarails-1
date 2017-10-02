@@ -4,13 +4,15 @@ class ProfilesController < ApplicationController
   # GET /profiles
   # GET /profiles.json
   def index
-    @profiles = Profile.all
+    #@profiles = Profile.all
   end
 
   # GET /profiles/1
   # GET /profiles/1.json
+  # GET /users/2
   def show
     redirect_to edit_profile_url if @profile.nil?
+    @photos = Photo.where(user_id: @profile.user_id).limit(9)
   end
 
   # GET /profiles/new
@@ -43,9 +45,14 @@ class ProfilesController < ApplicationController
 
   # PATCH/PUT /profiles/1
   # PATCH/PUT /profiles/1.json
+  # PATCH /users/2
   def update
     respond_to do |format|
-      if @profile.update(profile_params)
+      if performing_follow?
+        @profile.user.toggle_followed_by(current_user)
+        format.html { redirect_to @profile.user }
+        format.json { render :show, status: :ok, location: @profile }
+      elsif @profile.update(profile_params)
         format.html { redirect_to @profile, notice: 'Profile was successfully updated.' }
         format.json { render :show, status: :ok, location: @profile }
       else
@@ -68,11 +75,21 @@ class ProfilesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_profile
-      @profile = Profile.find_by(user: current_user)
+      if params[:id]
+        # another persons profile page
+        @profile = Profile.find_by!(user_id: params[:id])
+      else
+        # the signed in users profile
+        @profile = Profile.find_by!(user: current_user)
+      end
     end
   
   # Never trust parameters from the scary internet, only allow the white list through.
     def profile_params
       params.require(:profile).permit(:username, :name, :bio)
     end
+  
+  def performing_follow?
+    params.require(:user)[:toggle_follow].present?
+  end
 end
