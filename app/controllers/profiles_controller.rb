@@ -1,5 +1,7 @@
 class ProfilesController < ApplicationController
   before_action :set_profile, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, only: [:edit, :update, :destroy]
+
 
   # GET /profiles
   # GET /profiles.json
@@ -12,7 +14,9 @@ class ProfilesController < ApplicationController
   # GET /users/2
   def show
     redirect_to edit_profile_url if @profile.nil?
-    @photos = Photo.where(user_id: @profile.user_id).limit(9)
+    if user_signed_in?
+      @photos = Photo.where(user_id: @profile.user_id).limit(9)
+    end
   end
 
   # GET /profiles/new
@@ -23,7 +27,8 @@ class ProfilesController < ApplicationController
 
   # GET /profiles/1/edit
   def edit
-    @profile = Profile.find_or_initialize_by(user: current_user)
+    #@profile = Profile.find_or_initialize_by(user: current_user)
+    @profile = Profile.new(user: current_user) if @profile.nil?
   end
 
   # POST /profiles
@@ -52,6 +57,9 @@ class ProfilesController < ApplicationController
         @profile.user.toggle_followed_by(current_user)
         format.html { redirect_to @profile.user }
         format.json { render :show, status: :ok, location: @profile }
+      # can only edit your own profile
+      elsif @profile.nil? || @profile.user != current_user
+        redirect_to root_url
       elsif @profile.update(profile_params)
         format.html { redirect_to @profile, notice: 'Profile was successfully updated.' }
         format.json { render :show, status: :ok, location: @profile }
@@ -80,7 +88,7 @@ class ProfilesController < ApplicationController
         @profile = Profile.find_by!(user_id: params[:id])
       else
         # the signed in users profile
-        @profile = Profile.find_by!(user: current_user)
+        @profile = Profile.find_by(user: current_user)
       end
     end
   
