@@ -90,6 +90,6 @@ class ProfilesController < ApplicationController
     end
   
   def performing_follow?
-    params.require(:user)[:toggle_follow].present?
+    params.dig(:user, :toggle_follow).present?
   end
 end
